@@ -3,6 +3,7 @@
 from threading import *
 import socket, thread, sys
 def f(sock):
+    connection.send("Welcome to Borui's Chat Room")
     while True:
         data = connection.recv(1024)
         if data == 'client disconnect':
@@ -12,29 +13,29 @@ def f(sock):
             print '<clinet1> %s' % data
 
 if __name__ == '__main__':
+    # Create a TCP/IP socket
+    sock = socket.socket()
+    host = ''
+    port = 12345
+    print 'starting up on %s port %s' % (host, port)
+    sock.bind((host, port))
+    # Listen for incoming connections
+    sock.listen(1)
+    # Wait for a connection
     while True:
-        # Create a TCP/IP socket
-        sock = socket.socket()
-        host = ''
-        port = 12345
-        print 'starting up on %s port %s' % (host, port)
-        sock.bind((host, port))
-        # Listen for incoming connections
-        sock.listen(1)
-        # Wait for a connection
         print 'waiting for a connection'
         connection, client_address = sock.accept()
         print 'connection from', client_address
-        connection.send("Welcome to Borui's Chat Room")
 
         p = Thread(target=f, args=(sock,))
         p.start()
 
-        while True:
-            if p.is_alive():
-                message = raw_input("<You> ")
-                connection.send(message)
-            else:
-                break
-        
-        sock.close()
+    '''
+    while True:
+        if p.is_alive():
+            message = raw_input("<You> ")
+            connection.send(message)
+        else:
+            break
+    '''    
+    sock.close()

@@ -11,8 +11,8 @@ def recv(sock):
 		data = sock.recv(1024)
 		if data == '':
 			mylist.insert(END, "Host disconnect")
-			sock.close()
-			return
+			#sock.close()
+			#return
 		else:
 			print data
 			mylist.insert(END, "<Host> " + data)

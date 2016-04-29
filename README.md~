@@ -3,5 +3,5 @@
 In GroupChatServer, chatServer.py is responsible for sending messages to all
 connected clients, which uses select() method to handle multi-users.
 
-In p2p_socket, host.py uses multi-thread to handle send/recv process.
-What's more, I implemented GUI for the client.
+In p2p_socket, host.py uses multi-thread to handle send/recv process. What's more, I implemented
+GUI for the client.
