@@ -3,6 +3,8 @@
 from threading import *
 import socket, thread, sys
 def f(sock):
+    # close parent socket
+    #sock.close()
     connection.send("Welcome to Borui's Chat Room")
     while True:
         data = connection.recv(1024)
@@ -30,12 +32,5 @@ if __name__ == '__main__':
         p = Thread(target=f, args=(sock,))
         p.start()
 
-    '''
-    while True:
-        if p.is_alive():
-            message = raw_input("<You> ")
-            connection.send(message)
-        else:
-            break
-    '''    
+  
     sock.close()

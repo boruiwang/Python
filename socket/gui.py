@@ -54,7 +54,7 @@ def main():
 	global mylist, Message
 	root = Tk()
 	#root.geometry('400x400+800+400')
-	root.title("Samsung ChatRoom")
+	root.title("Borui's ChatRoom")
 	img = PhotoImage(file="120430.gif")
 	root.tk.call('wm', 'iconphoto', root._w, img)
 	
