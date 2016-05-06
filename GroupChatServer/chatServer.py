@@ -1,9 +1,11 @@
 '''
 This file is the chat server which can broadcast the message
-among connected clients.
+among connected clients. The server can store all message sent
+by user into MongoDB.
 '''
 
-import socket, select
+from pymongo import MongoClient
+import socket, select, datetime
 
 
 class chatServer(object):
@@ -13,6 +15,7 @@ class chatServer(object):
 		self.port = port
 		self.socket_list = []
 		self.connected_list = []
+		self.user = {}
 
 	def setUpServer(self, socket):
 		# create server socket waiting for the connection
@@ -50,14 +53,17 @@ class chatServer(object):
 				else:
 					data = socket.recv(1024)
 					if data:
-						message = " [ " + str(socket.getpeername()) + " ] " + data
+						message = data
+						self.storeInDB(data, socket)
 						self.broadcast(server_sock, socket, message)
 					else:
 						print "closing " + str(socket.getpeername()) + " after reading no data\n"
 						self.socket_list.remove(socket)
+						# delete user dict
+						if socket.getpeername()[1] in self.user:
+							del self.user[socket.getpeername()[1]]
 						message = "[ %s ] is offline\n" % str(socket.getpeername())
 						self.broadcast(server_sock, socket, message)
-	
 
 	def broadcast(self, server, client, message):
 		for socket in self.socket_list:
@@ -69,6 +75,31 @@ class chatServer(object):
 					socket.close()
 					if socket in self.socket_list:
 						self.socket_list.remove(socket)
+
+	# Store the message to MongoDB
+	def storeInDB(self, data, socket):
+		# data format is: username: message
+		user_name = data.split(":")[0]
+		msg = data.split(":")[1]
+		
+		# append the user list
+		user_port = socket.getpeername()[1]
+		if user_port not in self.user:
+			self.user[user_port] = user_name
+		print self.user
+		# find out who are receivers
+		toOther = []
+		for key in self.user.keys():
+			if key != user_port:
+				toOther.append(self.user[key])
+
+		# connect to MongoDB
+		client = MongoClient('localhost:27017')
+		db = client.myMB
+		db.chatMsg.insert({"from" : user_name,
+						   "to"   : toOther,
+						   "text" : msg,
+						   "date" : datetime.datetime.utcnow()})
 
 if __name__ == '__main__':
 	myServer = chatServer(8888)

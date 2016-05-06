@@ -8,6 +8,8 @@ http://www.bogotobogo.com/python/python_network_programming_tcp_server_client_ch
 
 import socket, select, sys
 
+
+
 def client():
 	if(len(sys.argv) < 3) :
 		print 'Usage : python chat_client.py hostname port'
@@ -15,6 +17,7 @@ def client():
 
 	host = sys.argv[1]
 	port = int(sys.argv[2])
+	user_name = raw_input('User name: ')
 
 	s = socket.socket()
 	s.settimeout(2)
@@ -25,7 +28,7 @@ def client():
 		print 'Unable to connect to ' + host
 		sys.exit()
 
-	print 'Connected to remote host. You can start sending messages'
+	print 'Connected to remote %s. You can start sending messages' %host
 	sys.stdout.write('[Me] ');
 	sys.stdout.flush()
 
@@ -48,8 +51,7 @@ def client():
 			else :
 				# user entered a message
 				msg = sys.stdin.readline()
-				print msg
-				s.send(msg)
+				s.send(user_name + ": " + msg)
 				sys.stdout.write('[Me] ');
 				sys.stdout.flush() 
 
